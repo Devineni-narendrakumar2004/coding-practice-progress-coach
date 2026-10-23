@@ -69,6 +69,24 @@ def initialize_database():
                     REFERENCES progress_snapshots(id)
             )
         """)
+        
+            # Fetched LeetCode profiles
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS fetched_profiles (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_name TEXT NOT NULL,
+                username TEXT,
+                source_url TEXT NOT NULL,
+                ranking INTEGER,
+                solved_by_difficulty TEXT,
+                success INTEGER NOT NULL,
+                message TEXT,
+                retrieved_at TEXT,
+                saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+
 
 
 
