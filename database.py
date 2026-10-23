@@ -8,8 +8,11 @@ DATABASE_NAME = "coding_coach.db"
 
 
 def initialize_database():
-    """Create the database and student profiles table."""
+    """Create all required database tables."""
+
     with sqlite3.connect(DATABASE_NAME) as connection:
+
+        # Student profiles
         connection.execute("""
             CREATE TABLE IF NOT EXISTS student_profiles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +23,9 @@ def initialize_database():
                 weekly_hours INTEGER NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """)
+        """)
+
+        # Approved weekly plans
         connection.execute("""
             CREATE TABLE IF NOT EXISTS approved_weekly_plans (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,8 +35,9 @@ def initialize_database():
                 approved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(student_name, plan_hash)
             )
-        
         """)
+
+        # Solved problems
         connection.execute("""
             CREATE TABLE IF NOT EXISTS solved_problems (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +48,29 @@ def initialize_database():
                 solved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+
+        # Progress snapshots
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS progress_snapshots (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_name TEXT NOT NULL,
+                recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Topic-wise progress
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS topic_progress (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                snapshot_id INTEGER NOT NULL,
+                topic TEXT NOT NULL,
+                solved_count INTEGER NOT NULL,
+                FOREIGN KEY (snapshot_id)
+                    REFERENCES progress_snapshots(id)
+            )
+        """)
+
+
 
 
 def save_student_profile(profile):
